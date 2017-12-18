@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/albertoleal/concourse-flake-hunter/fly"
@@ -19,6 +20,7 @@ const (
 type SearchSpec struct {
 	Pattern string
 	Limit   int
+	Job     string
 }
 
 type Searcher struct {
@@ -46,7 +48,11 @@ func (s *Searcher) Search(spec SearchSpec) ([]Build, error) {
 	bs := []Build{}
 	count := 1
 	for _, build := range builds {
-		if build.Status != string(atc.StatusSucceeded) && build.Status != string(atc.StatusFailed) {
+		if build.Status != string(atc.StatusFailed) {
+			continue
+		}
+
+		if spec.Job != "" && !strings.Contains(build.JobName, spec.Job) {
 			continue
 		}
 

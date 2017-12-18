@@ -20,6 +20,11 @@ var SearchCommand = cli.Command{
 			Usage: "Limit number of builds to check",
 			Value: 50,
 		},
+		cli.StringFlag{
+			Name:  "job, j",
+			Usage: "Job name to search",
+			Value: "",
+		},
 	},
 
 	Action: func(ctx *cli.Context) error {
@@ -33,6 +38,7 @@ var SearchCommand = cli.Command{
 		spec := hunter.SearchSpec{
 			Pattern: ctx.Args().First(),
 			Limit:   ctx.Int("limit"),
+			Job:     ctx.String("job"),
 		}
 		builds, err := searcher.Search(spec)
 		if err != nil {
